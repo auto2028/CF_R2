@@ -14,6 +14,22 @@
     <link rel="icon" type="image/png" href="/assets/favicon.png" />
     <style>
       .login-modal {
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文件库</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+    <link rel="prefetch" href="/assets/main.mjs" />
+    <link rel="prefetch" href="/assets/MimeIcon.vue" />
+    <link rel="stylesheet" href="/assets/main.css" />
+    <link rel="manifest" href="/assets/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <style>
+      .login-modal {
         position: fixed;
         top: 50%;
         left: 50%;
@@ -71,7 +87,7 @@
             const encryptedUsername =
               "U2FsdGVkX19PU0pKL9bV5Jh5y9Fi+xvSWN9OKjT0uAY="; // 加密的用户名 "admin"
             const encryptedPassword =
-              "U2FsdGVkX18oEzCF8WaITGp7RDVGv4kbcTD2OGs+Maw="; // 加密的密码 "admin"
+              "U2FsdGVkX1+ek8F56Khqqz+mzz1lfYTLdxtzhMBxK3Q="; // 加密的密码 "admin999"
 
             const correctUsername = this.decrypt(encryptedUsername);
             const correctPassword = this.decrypt(encryptedPassword);
