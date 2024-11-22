@@ -64,14 +64,16 @@
       const password = decodeBase64(encryptedCredentials.password);
 
       window.onload = () => {
+        const appContainer = document.getElementById("app");
+
         // 创建弹出窗口
         const createLoginDialog = () => {
-          const overlay = document.createElement('div');
-          overlay.className = 'overlay';
+          const overlay = document.createElement("div");
+          overlay.className = "overlay";
           document.body.appendChild(overlay);
 
-          const dialog = document.createElement('div');
-          dialog.className = 'login-dialog';
+          const dialog = document.createElement("div");
+          dialog.className = "login-dialog";
           dialog.innerHTML = `
             <h3>登录</h3>
             <input type="text" id="login-username" placeholder="用户名" />
@@ -81,58 +83,65 @@
           document.body.appendChild(dialog);
 
           // 登录按钮点击事件
-          document.getElementById('login-submit').onclick = () => {
-            const enteredUsername = document.getElementById('login-username').value;
-            const enteredPassword = document.getElementById('login-password').value;
+          document.getElementById("login-submit").onclick = () => {
+            const enteredUsername =
+              document.getElementById("login-username").value;
+            const enteredPassword =
+              document.getElementById("login-password").value;
 
             if (enteredUsername === username && enteredPassword === password) {
-              alert('登录成功！');
+              alert("登录成功！");
               document.body.removeChild(dialog);
               document.body.removeChild(overlay);
+              loadApp(); // 登录成功后加载主应用
             } else {
-              alert('用户名或密码错误，请重试！');
+              alert("用户名或密码错误，请重试！");
             }
           };
         };
 
-        createLoginDialog();
+        // 加载主应用
+        const loadApp = () => {
+          const { loadModule } = window["vue3-sfc-loader"];
+
+          const options = {
+            moduleCache: { vue: Vue },
+            async getFile(url) {
+              const res = await fetch(url);
+              if (!res.ok)
+                throw Object.assign(new Error(res.statusText + " " + url), {
+                  res,
+                });
+              return {
+                getContentData: (asBinary) =>
+                  asBinary ? res.arrayBuffer() : res.text(),
+              };
+            },
+            addStyle(textContent) {
+              const style = document.createElement("style");
+              style.textContent = textContent;
+              const ref = document.head.getElementsByTagName("style")[0] || null;
+              document.head.insertBefore(style, ref);
+            },
+          };
+
+          const app = Vue.createApp({
+            components: {
+              App: Vue.defineAsyncComponent(() =>
+                loadModule("/assets/App.vue", options)
+              ),
+            },
+            template: "<App></App>",
+          });
+
+          app.mount("#app");
+        };
+
+        createLoginDialog(); // 首次加载时显示登录框
       };
     </script>
   </head>
   <body>
     <div id="app"></div>
-    <script>
-      const { loadModule } = window["vue3-sfc-loader"];
-
-      const options = {
-        moduleCache: { vue: Vue },
-        async getFile(url) {
-          const res = await fetch(url);
-          if (!res.ok)
-            throw Object.assign(new Error(res.statusText + " " + url), { res });
-          return {
-            getContentData: (asBinary) =>
-              asBinary ? res.arrayBuffer() : res.text(),
-          };
-        },
-        addStyle(textContent) {
-          const style = document.createElement("style");
-          style.textContent = textContent;
-          const ref = document.head.getElementsByTagName("style")[0] || null;
-          document.head.insertBefore(style, ref);
-        },
-      };
-
-      const app = Vue.createApp({
-        components: {
-          App: Vue.defineAsyncComponent(() =>
-            loadModule("/assets/App.vue", options)
-          ),
-        },
-        template: "<App></App>",
-      });
-
-      app.mount("#app");
-    </script>
   </body>
 </html>
