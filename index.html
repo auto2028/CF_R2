@@ -5,11 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>文件库</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
     <link rel="stylesheet" href="/assets/main.css" />
-    <link rel="manifest" href="/assets/manifest.json" />
-    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <style>
+      /* 样式设置 */
+      .login-dialog {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        z-index: 1000;
+        width: 300px;
+        border-radius: 8px;
+      }
+
+      .login-dialog input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .login-dialog button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .login-dialog button:hover {
+        background-color: #0056b3;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+    </style>
     <script type="module">
       import encryptedCredentials from './auth.js';
 
@@ -18,21 +63,39 @@
       const username = decodeBase64(encryptedCredentials.username);
       const password = decodeBase64(encryptedCredentials.password);
 
-      // Display login prompt
-      const showLoginPrompt = () => {
-        let enteredUsername = prompt("请输入用户名:");
-        let enteredPassword = prompt("请输入密码:");
-
-        if (enteredUsername === username && enteredPassword === password) {
-          alert("登录成功！");
-        } else {
-          alert("用户名或密码错误！");
-          showLoginPrompt(); // Retry on failure
-        }
-      };
-
       window.onload = () => {
-        showLoginPrompt();
+        // 创建弹出窗口
+        const createLoginDialog = () => {
+          const overlay = document.createElement('div');
+          overlay.className = 'overlay';
+          document.body.appendChild(overlay);
+
+          const dialog = document.createElement('div');
+          dialog.className = 'login-dialog';
+          dialog.innerHTML = `
+            <h3>登录</h3>
+            <input type="text" id="login-username" placeholder="用户名" />
+            <input type="password" id="login-password" placeholder="密码" />
+            <button id="login-submit">登录</button>
+          `;
+          document.body.appendChild(dialog);
+
+          // 登录按钮点击事件
+          document.getElementById('login-submit').onclick = () => {
+            const enteredUsername = document.getElementById('login-username').value;
+            const enteredPassword = document.getElementById('login-password').value;
+
+            if (enteredUsername === username && enteredPassword === password) {
+              alert('登录成功！');
+              document.body.removeChild(dialog);
+              document.body.removeChild(overlay);
+            } else {
+              alert('用户名或密码错误，请重试！');
+            }
+          };
+        };
+
+        createLoginDialog();
       };
     </script>
   </head>
