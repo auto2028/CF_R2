@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>文件库</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
     <link rel="stylesheet" href="/assets/main.css" />
     <style>
       /* 样式设置 */
@@ -66,7 +67,6 @@
       window.onload = () => {
         const appContainer = document.getElementById("app");
 
-        // 创建弹出窗口
         const createLoginDialog = () => {
           const overlay = document.createElement("div");
           overlay.className = "overlay";
@@ -100,8 +100,7 @@
           };
         };
 
-        // 加载主应用
-        const loadApp = () => {
+          const loadApp = () => {
           const { loadModule } = window["vue3-sfc-loader"];
 
           const options = {
@@ -137,7 +136,7 @@
           app.mount("#app");
         };
 
-        createLoginDialog(); // 首次加载时显示登录框
+        createLoginDialog(); 
       };
     </script>
   </head>
