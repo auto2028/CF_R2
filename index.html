@@ -5,13 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>文件库</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
     <link rel="prefetch" href="/assets/main.mjs" />
     <link rel="prefetch" href="/assets/MimeIcon.vue" />
     <link rel="stylesheet" href="/assets/main.css" />
     <link rel="manifest" href="/assets/manifest.json" />
     <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <style>
+      .login-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
@@ -43,20 +56,30 @@
             showLogin: true,
             username: "",
             password: "",
-            correctUsername: "admin",
-            correctPassword: "admin",
             loginError: false,
           };
         },
         methods: {
+          // 解密函数
+          decrypt(data) {
+            const key = "secret_key"; // 加密和解密的密钥
+            const bytes = CryptoJS.AES.decrypt(data, key);
+            return bytes.toString(CryptoJS.enc.Utf8);
+          },
+          // 登录验证
           login() {
-            if (
-              this.username === this.correctUsername &&
-              this.password === this.correctPassword
-            ) {
-              this.showLogin = false;
+            const encryptedUsername =
+              "U2FsdGVkX19PU0pKL9bV5Jh5y9Fi+xvSWN9OKjT0uAY="; // 加密的用户名 "admin"
+            const encryptedPassword =
+              "U2FsdGVkX18oEzCF8WaITGp7RDVGv4kbcTD2OGs+Maw="; // 加密的密码 "admin"
+
+            const correctUsername = this.decrypt(encryptedUsername);
+            const correctPassword = this.decrypt(encryptedPassword);
+
+            if (this.username === correctUsername && this.password === correctPassword) {
+              this.showLogin = false; // 登录成功
             } else {
-              this.loginError = true;
+              this.loginError = true; // 登录失败
             }
           },
         },
@@ -83,20 +106,5 @@
 
       app.mount("#app");
     </script>
-
-    <script type="module"></script>
-    <style>
-      .login-modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        border-radius: 8px;
-        text-align: center;
-      }
-    </style>
   </body>
 </html>
